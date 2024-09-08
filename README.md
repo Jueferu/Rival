@@ -1,9 +1,9 @@
 # Rival
-Rival is a (Rocket League)[https://www.rocketleague.com/en] bot trained for 3v3 soccer.
-The bot is trained using (RLGym-PPO)[https://github.com/AechPro/rlgym-ppo].
+Rival is a [Rocket League](https://www.rocketleague.com/en) bot trained for 3v3 soccer.
+The bot is trained using [RLGym-PPO](https://github.com/AechPro/rlgym-ppo).
 
 ## How to play against it?
-Install (RLBot)[https://rlbot.org/]
+Install [RLBot](https://rlbot.org/)
 Download Rival via `git clone https://github.com/AechPro/rlgym-ppo.git`
 Execute RLBotGUI
 Click the "+Add" button, then "Load Cfg File"
@@ -15,7 +15,7 @@ Now you can put Rival against yourself or other bots!
 ## Training Plan
 At the end of each checkpoint, leave only the latest sub-checkpoint and delete the others, then commit with the "goal" of the training.
 
-The training plan takes a lot of pages from (ZealanL's RLGym-PPO Guide)[https://github.com/ZealanL/RLGym-PPO-Guide]
+The training plan takes a lot of pages from [ZealanL's RLGym-PPO Guide](https://github.com/ZealanL/RLGym-PPO-Guide)
 
 ### STEP 1: Learning to touch the ball
 ts_per_iteration = 50_000
