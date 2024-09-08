@@ -3,13 +3,14 @@ Rival is a [Rocket League](https://www.rocketleague.com/en) bot trained for 3v3 
 The bot is trained using [RLGym-PPO](https://github.com/AechPro/rlgym-ppo).
 
 ## How to play against it?
-Install [RLBot](https://rlbot.org/)
-Download Rival via `git clone https://github.com/AechPro/rlgym-ppo.git`
-Execute RLBotGUI
-Click the "+Add" button, then "Load Cfg File"
-Choose Rival\latest_bot.cfg
+1. Install [RLBot](https://rlbot.org/)
+2. Download Rival via `git clone https://github.com/AechPro/rlgym-ppo.git`
+3. Execute RLBotGUI
+4. Click the "+Add" button, then "Load Cfg File"
+5. Choose `Rival\latest_bot.cfg`
 
 Now you can put Rival against yourself or other bots!
+
 (RIVAL CAN ONLY PLAY WITH 3 PLAYERS OR LESS PER TEAM!)
 
 ## Training Plan
@@ -19,10 +20,15 @@ The training plan takes a lot of pages from [ZealanL's RLGym-PPO Guide](https://
 
 ### STEP 1: Learning to touch the ball
 ts_per_iteration = 50_000
+
 learning_rate = 3e-4
+
 ppo_epochs = 3
+
 team_size = 1
+
 state_setter = RandomState(True, True, False)
+
 rewards = (
         (EventReward(touch=1), 20),
         (VelocityPlayerToBallReward(), 5),
@@ -35,9 +41,13 @@ Training for this amount of timesteps is very overkill, but that's how I want it
 
 ### STEP 2: Learning to score
 ts_per_iteration = 100_000
+
 learning_rate = 2e-4
+
 ppo_epochs = 3
+
 team_size = 1
+
 state_setter = (
         WallPracticeState(),
         KickoffLikeSetter(),
@@ -50,6 +60,7 @@ state_setter = (
         ShotState(),
         RandomState(True, True, False),
     )
+    
 rewards = (
         (TouchBallRewardScaledByHitForce, 5),
         (VelocityPlayerToBallReward(), 2.5),
