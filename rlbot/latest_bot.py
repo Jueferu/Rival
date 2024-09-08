@@ -50,7 +50,7 @@ class RLGymPPOBot(BaseAgent):
             ang_coef=1 / np.pi,
             lin_vel_coef=1 / common_values.CAR_MAX_SPEED,
             ang_vel_coef=1 / common_values.CAR_MAX_ANG_VEL,
-			player_padding=2,
+			player_padding=3,
 			expanding=False)
 		self.agent = Agent(os.path.join(get_most_recent_checkpoint(), "PPO_POLICY.pt"))
 		self.tick_skip = 8
