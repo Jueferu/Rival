@@ -47,5 +47,3 @@ class WeightedSampleSetter(StateSetter):
         """
         choice = choices(self.state_setters, weights=self.weights)[0]
         choice.reset(state_wrapper)
-        
-        print(f"Selected state setter: {choice.__class__.__name__}")

@@ -90,27 +90,25 @@ def build_rocketsim_env():
     goal_reward = 1
     agression_bias = .2
     concede_reward = -goal_reward * (1 - agression_bias)
-    
-    team_spirit = .3
-    opp_scale = .3
 
     rewards = CombinedReward.from_zipped(
-        (ZeroSumReward(TouchBallRewardScaledByHitForce(), team_spirit, opp_scale), 5),
-        (ZeroSumReward(VelocityPlayerToBallReward(), team_spirit, opp_scale), 4),
-        (PlayerFaceBallReward(), .5),
-        (AirReward(), .1),
+        (TouchBallRewardScaledByHitForce(), 10),
+        (VelocityPlayerToBallReward(), 5),
+        (PlayerFaceBallReward(), .25),
+        (AirReward(), .15),
         
-        (ZeroSumReward(PlayerIsClosestBallReward(), team_spirit, opp_scale), 2.5),
-        (ZeroSumReward(TouchedLastReward(), team_spirit, opp_scale), 6),
-        (VelocityBallToGoalReward(), 15),
+        (PlayerIsClosestBallReward(), 4),
+        (PlayerVelocityReward(), 2.5),
+        (PlayerBehindBallReward(), 7.5),
+        (TouchedLastReward(), 2.5),
+        (VelocityBallToGoalReward(), 20),
         (EventReward(team_goal=goal_reward, concede=concede_reward), 30),
-        (PlayerVelocityReward(), 3)
         
         (KickoffProximityReward(), 30),
     )
 
     spawn_opponents = True
-    team_size = 2
+    team_size = 1
     tick_skip = 8
 
     no_touch_seconds = 10
@@ -147,7 +145,7 @@ if __name__ == "__main__":
 
     n_proc = 40
     min_inference_size = max(1, int(round(n_proc * 0.9)))
-    ts_per_iteration = 100_000
+    ts_per_iteration = 200_000
 
     try:
         checkpoint_load_dir = get_most_recent_checkpoint()
@@ -165,16 +163,16 @@ if __name__ == "__main__":
                       exp_buffer_size=ts_per_iteration*4,
                       ppo_minibatch_size=25_000,
                       ppo_ent_coef=0.01,
-                      ppo_epochs=3,
+                      ppo_epochs=4,
                       standardize_returns=True,
                       standardize_obs=False,
                       save_every_ts=1_000_000,
                       policy_layer_sizes=[2048, 2048, 1024, 1024],
                       critic_layer_sizes=[2048, 2048, 1024, 1024],
                       timestep_limit=10e15,
-                      policy_lr=2e-4,
-                      critic_lr=2e-4,
-                      render=False,
+                      policy_lr=1e-4,
+                      critic_lr=1e-4,
+                      render=True,
                       render_delay=8/240)
     
     start_time = time.time()
