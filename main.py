@@ -83,51 +83,42 @@ def build_rocketsim_env():
     from rewards.goal_speed_and_placement_reward import GoalSpeedAndPlacementReward
     from rewards.kickoff_proximity_reward import KickoffProximityReward
     from rewards.save_boost_reward import SaveBoostReward
+    from rewards.boost_pickup_reward import BoostPickupReward
     from rewards.aerial_reward import AerialReward
+    from rewards.aerial_distance_reward import AerialDistanceReward
 
-    from rlgym_sim.utils.reward_functions.common_rewards import EventReward
+    from rlgym_sim.utils.reward_functions.common_rewards import EventReward, LiuDistanceBallToGoalReward
 
     goal_reward = 1
-    agression_bias = .2
+    agression_bias = .3
     concede_reward = -goal_reward * (1 - agression_bias)
     
     team_spirit = .3
     opp_scale = 1
 
     rewards = CombinedReward.from_zipped(
-        (ZeroSumReward(TouchBallRewardScaledByHitForce(), team_spirit, opp_scale), 5),
-        (ZeroSumReward(VelocityPlayerToBallReward(), team_spirit, opp_scale), 2.5),
-        (PlayerFaceBallReward(), .5),
-        (AirReward(), .1),
+        (ZeroSumReward(TouchBallRewardScaledByHitForce(), team_spirit, opp_scale), 10),
+        (ZeroSumReward(VelocityPlayerToBallReward(), team_spirit, opp_scale), 5),
+        (PlayerFaceBallReward(), 1),
+        (AirReward(), .05),
+        (ZeroSumReward(DribbleReward(), team_spirit, opp_scale), 5),
         
-        (ZeroSumReward(PlayerIsClosestBallReward(), team_spirit, opp_scale), 2.5),
-        (PlayerVelocityReward(), .75),
-        (PlayerBehindBallReward(), 5),
-        (ZeroSumReward(TouchedLastReward(), 1, opp_scale), 5),
-        (VelocityBallToGoalReward(), 25),
-        (EventReward(team_goal=goal_reward, concede=concede_reward), 30),
-        
-        (ZeroSumReward(KickoffProximityReward(), 1, opp_scale), 30),
-        (ZeroSumReward(AerialReward(), team_spirit, opp_scale), 20)
-    )
-    '''
-    rewards = CombinedReward.from_zipped(
-        (TouchBallRewardScaledByHitForce(), 10),
-        (VelocityPlayerToBallReward(), 2.5),
-        (PlayerFaceBallReward(), .5),
-        (AirReward(), .1),
-        
-        (PlayerIsClosestBallReward(), 2.5),
         (PlayerVelocityReward(), 1),
         (PlayerBehindBallReward(), 10),
-        (TouchedLastReward(), 5),
-        (VelocityBallToGoalReward(), 25),
-        (EventReward(team_goal=goal_reward, concede=concede_reward), 30),
+        (VelocityBallToGoalReward(), 20),
+        (LiuDistanceBallToGoalReward(), 15),
         
-        (KickoffProximityReward(), 30),
-        (AerialReward(), 20)
+        (ZeroSumReward(SaveBoostReward(), team_spirit, opp_scale), 15),
+        (ZeroSumReward(BoostPickupReward(), team_spirit, opp_scale), 15),
+        
+        # (ZeroSumReward(AerialReward(), team_spirit, opp_scale), 15),
+        # (ZeroSumReward(AerialDistanceReward(1, 1), team_spirit, opp_scale), 15),
+        
+        (ZeroSumReward(TouchedLastReward(), 1, opp_scale), 5),
+        (EventReward(team_goal=goal_reward, concede=concede_reward), 50),
+        
+        (ZeroSumReward(KickoffProximityReward(), 1, opp_scale), 30),
     )
-    '''
 
     spawn_opponents = True
     team_size = 2
@@ -185,7 +176,7 @@ if __name__ == "__main__":
                       exp_buffer_size=ts_per_iteration*4,
                       ppo_minibatch_size=50_000,
                       ppo_ent_coef=0.01,
-                      ppo_epochs=3,
+                      ppo_epochs=4,
                       standardize_returns=True,
                       standardize_obs=False,
                       save_every_ts=1_000_000,

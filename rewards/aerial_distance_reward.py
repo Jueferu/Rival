@@ -25,7 +25,7 @@ class AerialDistanceReward(RewardFunction):
         rew = 0
         is_current = self.current_car is not None and self.current_car.car_id == player.car_id
         # Test if player is on the ground
-        if player.car_data.position[1] < RAMP_HEIGHT:
+        if player.car_data.position[2] < RAMP_HEIGHT:
             if is_current:
                 is_current = False
                 self.current_car = None
