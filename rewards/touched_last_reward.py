@@ -10,4 +10,4 @@ class TouchedLastReward(RewardFunction):
         pass
 
     def get_reward(self, player: PlayerData, state: GameState, previous_action: np.ndarray) -> float:
-        return 1 if state.last_touch == player.car_id else -1
+        return 1 if state.last_touch == player.car_id else 0

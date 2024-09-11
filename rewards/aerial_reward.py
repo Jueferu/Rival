@@ -33,7 +33,7 @@ class AerialReward(RewardFunction):
         if player.on_ground:
             return 0
         
-        if ballPos[1] < BALL_MIN_HEIGHT:
+        if ballPos[2] < BALL_MIN_HEIGHT:
             return 0
         
         reward = distance_reward * speed_reward
