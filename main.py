@@ -98,17 +98,17 @@ def build_rocketsim_env():
 
     rewards = CombinedReward.from_zipped(
         (ZeroSumReward(TouchBallRewardScaledByHitForce(), team_spirit, opp_scale), 10),
-        (ZeroSumReward(VelocityPlayerToBallReward(), team_spirit, opp_scale), 5),
+        (ZeroSumReward(VelocityPlayerToBallReward(), team_spirit, opp_scale), 10),
         (PlayerFaceBallReward(), 1),
         (AirReward(), .05),
-        (ZeroSumReward(DribbleReward(), team_spirit, opp_scale), 5),
+        (ZeroSumReward(DribbleReward(), team_spirit, opp_scale), 15),
         
         (PlayerVelocityReward(), 1),
         (PlayerBehindBallReward(), 10),
-        (VelocityBallToGoalReward(), 20),
+        (VelocityBallToGoalReward(), 50),
         (LiuDistanceBallToGoalReward(), 15),
         
-        (ZeroSumReward(SaveBoostReward(), team_spirit, opp_scale), 15),
+        (ZeroSumReward(SaveBoostReward(), team_spirit, opp_scale), 5),
         (ZeroSumReward(BoostPickupReward(), team_spirit, opp_scale), 15),
         
         # (ZeroSumReward(AerialReward(), team_spirit, opp_scale), 15),
@@ -186,7 +186,8 @@ if __name__ == "__main__":
                       policy_lr=0.8e-4,
                       critic_lr=0.8e-4,
                       render=False,
-                      render_delay=8/240)
+                      render_delay=8/240,
+                      device="cuda")
     
     start_time = time.time()
 
