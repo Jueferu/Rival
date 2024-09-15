@@ -4,8 +4,6 @@ from rlgym_sim.utils import RewardFunction
 from rlgym_sim.utils.gamestates import GameState, PlayerData
 from rlgym_sim.utils.common_values import CAR_MAX_SPEED
 
-MAX_REWARD = 50
-
 class HitBallReward(RewardFunction):
     def __init__(self):
         super().__init__()
@@ -19,17 +17,19 @@ class HitBallReward(RewardFunction):
         car_velocity = player.car_data.linear_velocity
         
         # car face ball
-        car_to_ball = ball_pos - car_pos
-        car_forward = player.car_data.forward()
-        car_face_ball = np.dot(car_to_ball, car_forward)
+        ball_to_car = ball_pos - car_pos
+        car_foward = player.car_data.forward()
+        ball_to_car_norm = np.linalg.norm(ball_to_car)
+        ball_to_car /= ball_to_car_norm
+        car_face_ball = np.dot(car_foward, ball_to_car)
         car_face_ball_reward = np.max([0, car_face_ball])
         
-        # car speed towards ball
-        car_speed = np.linalg.norm(car_velocity)
-        dist_to_ball = np.linalg.norm(car_to_ball)
-        dir_to_ball = car_to_ball / dist_to_ball
-        speed_toward_ball = np.dot(car_to_ball, dir_to_ball)
-        speed_toward_ball_reward = np.max([0, speed_toward_ball / CAR_MAX_SPEED])
+        # speed toward ball
+        pos_diff = (state.ball.position - player.car_data.position)
+        dist_to_ball = np.linalg.norm(pos_diff)
+        dir_to_ball = pos_diff / dist_to_ball
+        speed_toward_ball = np.dot(car_velocity, dir_to_ball) / CAR_MAX_SPEED
+        speed_toward_ball_reward = np.max([0, speed_toward_ball])
         
         # hit ball reward
         hit_ball_reward = 1 if player.ball_touched else 0
@@ -44,5 +44,4 @@ class HitBallReward(RewardFunction):
         air_reward *= 0.15
         
         combined_reward = hit_ball_reward + car_face_ball_reward + speed_toward_ball_reward + air_reward
-        normalized_reward = combined_reward / MAX_REWARD
-        return normalized_reward
+        return combined_reward

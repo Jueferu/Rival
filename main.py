@@ -64,7 +64,7 @@ def build_rocketsim_env():
             lin_vel_coef=1 / common_values.CAR_MAX_SPEED,
             ang_vel_coef=1 / common_values.CAR_MAX_ANG_VEL, 
             player_padding=3, 
-            expanding=True)
+            expanding=False)
 
     env = rlgym_sim.make(tick_skip=tick_skip,
                          team_size=team_size,
@@ -113,7 +113,7 @@ if __name__ == "__main__":
                       policy_lr=2e-4,
                       critic_lr=2e-4,
                       render=True,
-                      render_delay=8/240)
+                      render_delay=8/120)
     
     start_time = time.time()
 
