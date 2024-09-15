@@ -16,6 +16,7 @@ act = LookupAction()
 
 OBS_SIZE = 231
 POLICY_LAYER_SIZES = [2048, 2048, 1024, 1024]
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 num_actions = len(act._lookup_table)
 
@@ -23,12 +24,13 @@ class Agent:
     def __init__(self, checkpoint_path: str):
         PPO_PATH = os.path.join(checkpoint_path, "PPO_POLICY.pt")
 
+        self.path = checkpoint_path
         self.name = os.path.basename(checkpoint_path)
         self.policy = DiscreteFF(
-            OBS_SIZE, num_actions, POLICY_LAYER_SIZES, torch.device("cuda:0")
+            OBS_SIZE, num_actions, POLICY_LAYER_SIZES, torch.device(DEVICE)
         )
         self.policy.load_state_dict(
-            torch.load(PPO_PATH, map_location="cuda", weights_only=True)
+            torch.load(PPO_PATH, map_location=DEVICE, weights_only=True)
         )
 
     def get_action(self, state):
@@ -146,6 +148,7 @@ if __name__ == "__main__":
             out = out + f"{new_match[0].name} vs {new_match[1].name}\n"
             matches.append(new_match)
 
+        print("")
         print(out)
         
         with ThreadPoolExecutor() as executor:
@@ -159,8 +162,11 @@ if __name__ == "__main__":
 
         return tournament_iteration(next_agents, recursiveLimit - 1)
 
-    agents = load_all_agents("data/checkpoints")
+    agents = load_all_agents(r"data\checkpoints")
     recursiveLimit = int(np.log2(len(agents)))
-    winner = tournament_iteration(agents, recursiveLimit)
-
-    print(winner)
+    winners = tournament_iteration(agents, recursiveLimit)
+    winner = winners[0]
+    
+    # Save the winner to a file
+    with open("best_agent.txt", "w") as f:
+        f.write(winner.path)
